@@ -2,6 +2,7 @@ package com.example.teamservice;
 
 
 import Model.Equipe;
+import Utils.Joueurs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -14,17 +15,20 @@ public class TeamServiceController {
 
 
     RestTemplate re;
-    public List<Equipe> equipeList;
+    public static List<Equipe> equipeList;
 
 
     public TeamServiceController() {
         Equipe e = new Equipe("BASTIA");
         Equipe e1 = new Equipe("PARIS");
         Equipe e2 = new Equipe("CORTE");
-        this.equipeList = new ArrayList<>();
-        this.equipeList.add(e);
-        this.equipeList.add(e1);
-        this.equipeList.add(e2);
+        Joueurs.createJoueurs(e,16);
+        Joueurs.createJoueurs(e1,16);
+        Joueurs.createJoueurs(e2,16);
+        equipeList = new ArrayList<>();
+        equipeList.add(e);
+        equipeList.add(e1);
+        equipeList.add(e2);
     }
     @GetMapping(value = "/teams")
     public List<Equipe> allTeams()
@@ -46,7 +50,7 @@ public class TeamServiceController {
     public Equipe addTeam(@RequestBody String nom)
     {
         Equipe e = new Equipe(nom);
-
+        Joueurs.createJoueurs(e,16);
         equipeList.add(e);
 
         return teamsById(e.id);
