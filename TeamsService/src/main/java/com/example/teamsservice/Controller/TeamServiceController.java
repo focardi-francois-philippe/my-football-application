@@ -49,6 +49,7 @@ public class TeamServiceController {
 
         return equipeList;
     }
+    @ApiOperation(value = "Get teams in the System ", response = Equipe.class, tags = "getTeam")
     @GetMapping(value = "/teams/{id}")
     public Equipe teamsById(@PathVariable int id)
     {
@@ -59,6 +60,7 @@ public class TeamServiceController {
         }
         return null;
     }
+    @ApiOperation(value = "Add default teams in  list in the System ", response = Iterable.class, tags = "addDefaultTeams")
     @GetMapping("/teams/default")
     public List<Equipe> DefaultEquipeAndPlayers()
     {
@@ -73,6 +75,7 @@ public class TeamServiceController {
         equipeList.add(e2);
         return  allTeams();
     }
+
     public void getPlayers(Equipe e, int nbrJoueurs)
     {
         if (nbrJoueurs <=0)
@@ -91,7 +94,7 @@ public class TeamServiceController {
 
         e.joueurs =  response;
     }
-
+    @ApiOperation(value = "Add team in  list in the System ", response = Equipe.class, tags = "addTeam")
     @PostMapping("/teams")
     public Equipe addTeam(@RequestBody String nom)
     {
@@ -101,6 +104,7 @@ public class TeamServiceController {
 
         return teamsById(e.id);
     }
+    @ApiOperation(value = "Delete team in list in the System ", response = Equipe.class, tags = "deleteTeam")
     @DeleteMapping(value = "/teams/{id}")
     public Equipe TeamById(@PathVariable int id)
     {
@@ -109,6 +113,7 @@ public class TeamServiceController {
         equipeList.remove(e);
         return  e;
     }
+    @ApiOperation(value = "Update name of teams in the System ", response = Iterable.class, tags = "UpdateNameTeams")
     @PutMapping(value = "teams/{id}")
     public Equipe UpdateName(@PathVariable int id, @RequestBody String name)
     {
@@ -122,6 +127,7 @@ public class TeamServiceController {
         e.nom = name;
         return  e;
     }
+    @ApiOperation(value = "Update player name  in the System ", response = Equipe.class, tags = "updatePlayerName")
     @PutMapping(value = "teams/players/{id}")
     public Joueur UpdatePlayerName(@PathVariable int id, @RequestBody String name)
     {
@@ -135,6 +141,7 @@ public class TeamServiceController {
         j.nom = name;
         return  j;
     }
+    @ApiOperation(value = "add player in team in the System ", response = Equipe.class, tags = "addPlayers")
     @PostMapping(value = "teams/{idEquipe}/addPlayers")
     public Equipe AddPlayers(@PathVariable int idEquipe, @RequestBody Joueur player)
     {
@@ -149,6 +156,7 @@ public class TeamServiceController {
         return  e;
     }
 
+    @ApiOperation(value = "Get player of teams in the System ", response = Joueur.class, tags = "getPlayerById")
     @GetMapping("/teams/players/{playerId}")
     public Joueur joueurById(@PathVariable int playerId)
     {
@@ -161,6 +169,7 @@ public class TeamServiceController {
         return  null;
     }
 
+    @ApiOperation(value = "Get Team  of one player in the System ", response = Equipe.class, tags = "getTeamByPlayerId")
     public Equipe equipeByIdJoueur(int idJoueur)
     {
         for (Equipe e: equipeList) {
@@ -172,6 +181,7 @@ public class TeamServiceController {
         return  null;
     }
 
+    @ApiOperation(value = "Delete player of teams in the System ", response = Joueur.class, tags = "deletePlayer")
     @DeleteMapping("/teams/players/{playerId}")
     public Joueur joueur(@PathVariable int playerId)
     {
