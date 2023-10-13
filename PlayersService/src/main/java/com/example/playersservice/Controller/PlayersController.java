@@ -56,6 +56,23 @@ public class PlayersController {
         return  response;
     }
 
+    @PutMapping("/players/{id}")
+    public Joueur updateName(@PathVariable int id,@RequestBody String name)
+    {
+        String url = BASE_URL_TEAMS_SERVICE+"teams/players/"+id;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON); // ou le type de contenu que vous souhaitez définir
+        HttpEntity<String> requestEntity = new HttpEntity<>(name, headers);
+        Joueur response = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                requestEntity,
+                new ParameterizedTypeReference<Joueur>() {}
+        ).getBody();
+        return  response;
+    }
+
     @DeleteMapping("/players/{id}")
     public Joueur joueur(@PathVariable int id)
     {

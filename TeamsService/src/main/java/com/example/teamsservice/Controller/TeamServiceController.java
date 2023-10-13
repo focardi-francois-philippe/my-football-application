@@ -3,6 +3,10 @@ package com.example.teamsservice.Controller;
 import com.example.teamsservice.Model.Equipe;
 import com.example.teamsservice.Model.Joueur;
 import com.example.teamsservice.Utils.Joueurs;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,7 +22,7 @@ import java.util.List;
 
 
 
-
+@Api(value = "Teams service ",description = "Gestion des equipes")
 @RestController
 public class TeamServiceController {
 
@@ -36,6 +40,9 @@ public class TeamServiceController {
         equipeList = new ArrayList<>();
 
     }
+    @ApiOperation(value = "Get list of teams in the System ", response = Iterable.class, tags = "getAllTeams")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Suceess|OK")})
     @GetMapping(value = "/teams")
     public List<Equipe> allTeams()
     {
@@ -114,6 +121,19 @@ public class TeamServiceController {
 
         e.nom = name;
         return  e;
+    }
+    @PutMapping(value = "teams/players/{id}")
+    public Joueur UpdatePlayerName(@PathVariable int id, @RequestBody String name)
+    {
+        Joueur j = joueurById(id);
+
+        if (j == null)
+        {
+            return null;
+        }
+
+        j.nom = name;
+        return  j;
     }
     @PostMapping(value = "teams/{idEquipe}/addPlayers")
     public Equipe AddPlayers(@PathVariable int idEquipe, @RequestBody Joueur player)
