@@ -13,4 +13,7 @@ public class Joueur {
         id = ai_id;
         ai_id++;
     }
+
+    public Joueur() {
+    }
 }

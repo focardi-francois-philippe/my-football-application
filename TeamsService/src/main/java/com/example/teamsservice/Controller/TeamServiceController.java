@@ -6,7 +6,10 @@ import com.example.teamsservice.Utils.Joueurs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -107,6 +110,55 @@ public class TeamServiceController {
 
         e.nom = name;
         return  e;
+    }
+    @PostMapping(value = "teams/{idEquipe}/addPlayers")
+    public Equipe AddPlayers(@PathVariable int idEquipe, @RequestBody Joueur player)
+    {
+
+        Equipe e = teamsById(idEquipe);
+
+        if (e == null)
+        {
+            return addTeam("name");
+        }
+        e.joueurs.add(player);
+        return  e;
+    }
+
+    @GetMapping("/teams/players/{playerId}")
+    public Joueur joueurById(@PathVariable int playerId)
+    {
+        for (Equipe e: equipeList) {
+            for (Joueur j: e.joueurs) {
+                if (j.id == playerId)
+                    return j;
+            }
+        }
+        return  null;
+    }
+
+    public Equipe equipeByIdJoueur(int idJoueur)
+    {
+        for (Equipe e: equipeList) {
+            for (Joueur j: e.joueurs) {
+                if (j.id == idJoueur)
+                    return e;
+            }
+        }
+        return  null;
+    }
+
+    @DeleteMapping("/teams/players/{playerId}")
+    public Joueur joueur(@PathVariable int playerId)
+    {
+        Joueur j =  joueurById(playerId);
+
+        if (j == null)
+            return  null;
+
+        Equipe e = equipeByIdJoueur(j.id);
+        e.joueurs.remove(j);
+        return j;
     }
     @Bean
     public RestTemplate restTemplate() {
