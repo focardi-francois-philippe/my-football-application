@@ -18,6 +18,8 @@ import java.util.List;
 @RestController
 public class PlayersController {
 
+
+    public final  String BASE_URL_TEAMS_SERVICE = "http://desktop-1g4113b.mshome.net:3031/";
     @Autowired
     RestTemplate restTemplate;
     ArrayList<Joueur> listJoueurs = new ArrayList<>();
@@ -36,14 +38,14 @@ public class PlayersController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Joueur> entity = new HttpEntity<>(j,headers);
-        String url = "http://127.0.0.1:3000/teams/"+idEquipe+"/addPlayers";
+        String url = BASE_URL_TEAMS_SERVICE+idEquipe+"/addPlayers";
         restTemplate.exchange(url, HttpMethod.POST, entity,Joueur.class);
         return j;
     }
     @GetMapping(value = "/players/{id}")
     public Joueur joueurById(@PathVariable int id)
     {
-        String url = "http://127.0.0.1:3000/teams/players/"+id;
+        String url = BASE_URL_TEAMS_SERVICE+"teams/players/"+id;
         Joueur response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
@@ -57,7 +59,7 @@ public class PlayersController {
     @DeleteMapping("/players/{id}")
     public Joueur joueur(@PathVariable int id)
     {
-        String url = "http://127.0.0.1:3000/teams/players/"+id;
+        String url = BASE_URL_TEAMS_SERVICE+"teams/players/"+id;
         Joueur response = restTemplate.exchange(
                 url,
                 HttpMethod.DELETE,

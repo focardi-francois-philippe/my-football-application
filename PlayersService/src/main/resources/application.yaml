@@ -1,0 +1,27 @@
+server:
+  port: 3032
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 2
+    instance-id: "Players-Service"
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
+
+spring:
+  application:
+    name: players-service
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    com.self.sprintboot.learning.employee: DEBUG

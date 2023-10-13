@@ -18,8 +18,12 @@ import java.util.List;
 
 
 
+
 @RestController
 public class TeamServiceController {
+
+    public final String   BASE_URL_PLAYERS_SERVICE = "http://desktop-1g4113b.mshome.net:3032/";
+
     @Autowired
     public RestTemplate restTemplate;
     public static List<Equipe> equipeList;
@@ -68,7 +72,7 @@ public class TeamServiceController {
         {
             nbrJoueurs = 16;
         }
-        String url = "http://127.0.0.1:3031/players/create/"+nbrJoueurs;
+        String url = BASE_URL_PLAYERS_SERVICE + "players/create/"+nbrJoueurs;
 
         List<Joueur> response = restTemplate.exchange(
                 url,
