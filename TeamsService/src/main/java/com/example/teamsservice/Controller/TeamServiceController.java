@@ -168,8 +168,15 @@ public class TeamServiceController {
         }
         return  null;
     }
-
     @ApiOperation(value = "Get Team  of one player in the System ", response = Equipe.class, tags = "getTeamByPlayerId")
+    @GetMapping("/players/{id}/teams")
+    public Equipe equipeByIdPlayers(@PathVariable int id)
+    {
+        Equipe e = equipeByIdJoueur(id);
+        return e;
+    }
+
+
     public Equipe equipeByIdJoueur(int idJoueur)
     {
         for (Equipe e: equipeList) {

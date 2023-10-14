@@ -96,6 +96,21 @@ public class MatchController {
         return m;
     }
 
+    @GetMapping("/matches/teams/{id}/all")
+    public List<Match> allMatchesTeams(@PathVariable int id)
+    {
+        List<Match> listMatchTeams = new ArrayList<>();
+
+        for (Match m:listMatch ) {
+            if (m.equipeDom.id == id || m.equipeExt.id == id)
+            {
+                listMatchTeams.add(m);
+            }
+
+        }
+        return listMatchTeams;
+    }
+
     public Match getMatchById(int id)
     {
         for (Match m : listMatch) {

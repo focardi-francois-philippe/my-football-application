@@ -1,0 +1,30 @@
+server:
+  port: 3034
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 2
+    instance-id: "Stats-Service"
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
+
+spring:
+  cloud:
+    client:
+      hostname : Stats-service
+  application:
+    name: Stats-service
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    com.self.sprintboot.learning.employee: DEBUG
