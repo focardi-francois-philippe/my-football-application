@@ -1,0 +1,30 @@
+server:
+  port: 3033
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 2
+    instance-id: "Match-Service"
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    healthcheck:
+      enabled: true
+    lease:
+      duration: 5
+
+spring:
+  cloud:
+    client:
+      hostname : Match-service
+  application:
+    name: Match-service
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    com.self.sprintboot.learning.employee: DEBUG
