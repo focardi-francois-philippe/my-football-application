@@ -4,6 +4,9 @@ import com.example.matchservice.Model.Equipe;
 import com.example.matchservice.Model.Joueur;
 import com.example.matchservice.Model.Match;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -36,12 +39,15 @@ public class MatchController {
     public MatchController() {
         listMatch = new ArrayList<>() ;
     }
+
+    @ApiOperation(value = "get all matchs in base", response = Iterable.class, tags = "getAllMatchs")
     @GetMapping("/matches")
     public List<Match> allMatch()
     {
 
         return  listMatch;
     }
+    @ApiOperation(value = "get one matchs in base by id", response = Match.class, tags = "getOneMatch")
     @GetMapping("/matches/{id}")
     public Match matchById(@PathVariable int id)
     {
@@ -49,8 +55,13 @@ public class MatchController {
         return  match;
     }
 
-    //@HystrixCommand(fallbackMethod = "fallBackcreateMatch")
+
+    @HystrixCommand(fallbackMethod = "fallBackcreateMatch")
     @PostMapping("/matches/teams/{idEquipeDom}/{idEquipeExt}")
+    @ApiOperation(value = "Add matches enter two teams", response = ResponseEntity.class, tags = "add match")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Equipe domicile ou exterieur pas definie ") })
     public ResponseEntity<?> createMatch(@PathVariable int idEquipeDom,@PathVariable int idEquipeExt)
     {
         Equipe equipeDom = getEquipeById(idEquipeDom);
@@ -72,19 +83,21 @@ public class MatchController {
     {
        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Le service teams n'est pas disponible");
     }
+    @ApiOperation(value = "Increment score domicile teams in one match", response = Match.class, tags = "scoreDom")
     @PutMapping("matches/{id}/teams/dom")
     public Match incrementScoreDom(@PathVariable int id)
     {
         Match m = getMatchById(id);
 
         if (m == null)
-            return new Match();
+            return null;
 
         m.scoreDom +=1;
 
         addButeur(m.lstButeurDom,choiceRandomButeur(m.equipeDom));
         return m;
     }
+    @ApiOperation(value = "Increment score exterieur teams in one match", response = Match.class, tags = "scoreExt")
     @PutMapping("matches/{id}/teams/ext")
     public Match incrementScoreExt(@PathVariable int id)
     {
@@ -97,7 +110,7 @@ public class MatchController {
         addButeur(m.lstButeurExt,choiceRandomButeur(m.equipeExt));
         return m;
     }
-
+    @ApiOperation(value = "Delete one match", response = Match.class, tags = "delete match")
     @DeleteMapping("/matches/{id}")
     public Match SupmatchById(@PathVariable int id)
     {
@@ -110,7 +123,7 @@ public class MatchController {
         listMatch.remove(m);
         return m;
     }
-
+    @ApiOperation(value = "Get all matchs for one teams", response = Iterable.class, tags = "scoreDom")
     @GetMapping("/matches/teams/{id}/all")
     public List<Match> allMatchesTeams(@PathVariable int id)
     {
