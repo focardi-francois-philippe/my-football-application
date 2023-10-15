@@ -1,6 +1,8 @@
 package com.example.statsservice.Controller;
 
 import com.example.statsservice.Model.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,12 +16,15 @@ import javax.swing.plaf.PanelUI;
 import java.util.List;
 
 @RestController
+@Api(value = "Stats service ",description = "Gestions des stats des joueurs et equipe")
 public class StatsController {
     public final  String BASE_URL_MATCHS_SERVICE = "http://desktop-1g4113b.mshome.net:3033/";
     public final  String BASE_URL_TEAMS_SERVICE = "http://desktop-1g4113b.mshome.net:3031/";
 
     @Autowired
     RestTemplate restTemplate;
+
+    @ApiOperation(value = "get stats for team in Season", response = StatsEquipe.class, tags = "getStatsTeams")
     @GetMapping("/team-stats/{teamId}")
     public StatsEquipe statsEquipeByIdTeams(@PathVariable int teamId)
     {
@@ -27,7 +32,7 @@ public class StatsController {
         List<Match> matchList = allMatchByTeamsId(teamId);
 
 
-        if (matchList == null)
+        if (matchList.size() == 0)
         {
             return null;
         }
@@ -41,6 +46,8 @@ public class StatsController {
 
         return  new StatsEquipe(e,nbrButMarque,nbrButEncaisse);
     }
+
+    @ApiOperation(value = "get stats for one player in Season", response = StatsJoueurs.class, tags = "getStatsPlayers")
     @GetMapping("/player-stats/{playerId}")
     public StatsJoueurs playerStatsById(@PathVariable int playerId)
     {
@@ -56,7 +63,7 @@ public class StatsController {
             return null;
         List<Match> matchList =  allMatchByTeamsId(response.id);
 
-        if (matchList == null)
+        if (matchList.size() == 0)
             return null;
 
 
