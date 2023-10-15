@@ -105,7 +105,7 @@ public class MatchController {
         Match m = getMatchById(id);
 
         if (m == null)
-            return new Match();
+            return null;
 
         m.scoreExt +=1;
         addButeur(m.lstButeurExt,choiceRandomButeur(m.equipeExt));
