@@ -4,6 +4,7 @@ import com.example.matchservice.Model.Equipe;
 import com.example.matchservice.Model.Joueur;
 import com.example.matchservice.Model.Match;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -24,7 +25,7 @@ import java.util.Random;
 
 
 @RestController
-
+@Api(value = "Match service",description = "Service permettant de créeer des matchs et gerer les scores")
 public class MatchController {
 
 
