@@ -3,9 +3,12 @@ package com.example.matchservice.Controller;
 import com.example.matchservice.Model.Equipe;
 import com.example.matchservice.Model.Joueur;
 import com.example.matchservice.Model.Match;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 @RestController
+
 public class MatchController {
+
+
+    @Autowired
+    Environment environment;
     public final  String BASE_URL_TEAMS_SERVICE = "http://desktop-1g4113b.mshome.net:3031/";
     @Autowired
     public RestTemplate restTemplate;
@@ -39,6 +48,8 @@ public class MatchController {
         Match match = getMatchById(id);
         return  match;
     }
+
+    //@HystrixCommand(fallbackMethod = "fallBackcreateMatch")
     @PostMapping("/matches/teams/{idEquipeDom}/{idEquipeExt}")
     public ResponseEntity<?> createMatch(@PathVariable int idEquipeDom,@PathVariable int idEquipeExt)
     {
@@ -56,6 +67,10 @@ public class MatchController {
         listMatch.add(match);
         return ResponseEntity.ok(match);
 
+    }
+    public ResponseEntity<?> fallBackcreateMatch(int equipeDom,int equipeExt)
+    {
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Le service teams n'est pas disponible");
     }
     @PutMapping("matches/{id}/teams/dom")
     public Match incrementScoreDom(@PathVariable int id)
@@ -140,6 +155,17 @@ public class MatchController {
     public Joueur choiceRandomButeur(Equipe e)
     {
         return e.joueurs.get(new Random().nextInt(e.joueurs.size()));
+    }
+
+    @GetMapping("/backend")
+    public String backend() {
+        System.out.println("Inside MyRestController::backend...");
+
+        String serverPort = environment.getProperty("local.server.port");
+
+        System.out.println("Port : " + serverPort);
+
+        return "Hello form Backend!!! " + " Host : localhost " + " :: Port : " + serverPort;
     }
 
     @Bean

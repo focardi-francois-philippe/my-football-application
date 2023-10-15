@@ -3,6 +3,7 @@ package com.example.teamsservice.Controller;
 import com.example.teamsservice.Model.Equipe;
 import com.example.teamsservice.Model.Joueur;
 import com.example.teamsservice.Utils.Joueurs;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -10,10 +11,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -76,6 +74,7 @@ public class TeamServiceController {
         return  allTeams();
     }
 
+
     public void getPlayers(Equipe e, int nbrJoueurs)
     {
         if (nbrJoueurs <=0)
@@ -94,16 +93,23 @@ public class TeamServiceController {
 
         e.joueurs =  response;
     }
+    @HystrixCommand(fallbackMethod = "servicePlayersNotFound")
     @ApiOperation(value = "Add team in  list in the System ", response = Equipe.class, tags = "addTeam")
     @PostMapping("/teams")
-    public Equipe addTeam(@RequestBody String nom)
+    public ResponseEntity<?>  addTeam(@RequestBody String nom)
     {
         Equipe e = new Equipe(nom);
         getPlayers(e,16);
         equipeList.add(e);
 
-        return teamsById(e.id);
+        return ResponseEntity.ok(teamsById(e.id));
     }
+
+    public ResponseEntity<?> servicePlayersNotFound(String nom)
+    {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Le service players n'est pas disponible");
+    }
+
     @ApiOperation(value = "Delete team in list in the System ", response = Equipe.class, tags = "deleteTeam")
     @DeleteMapping(value = "/teams/{id}")
     public Equipe TeamById(@PathVariable int id)
@@ -121,7 +127,7 @@ public class TeamServiceController {
 
         if (e == null)
         {
-            return addTeam(name);
+            return (Equipe) addTeam(name).getBody();
         }
 
         e.nom = name;
@@ -150,7 +156,7 @@ public class TeamServiceController {
 
         if (e == null)
         {
-            return addTeam("name");
+            return (Equipe) addTeam("name").getBody();
         }
         e.joueurs.add(player);
         return  e;

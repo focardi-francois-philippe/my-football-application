@@ -1,25 +1,29 @@
 server:
   port: 3033
 
+
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 5
     leaseExpirationDurationInSeconds: 2
-    instance-id: "Match-Service"
+    instance-id: "match-service"
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${registry.host:localhost}:${registry.port:8761}/eureka/
     healthcheck:
       enabled: true
     lease:
       duration: 5
+    register-with-eureka: true
+    fetch-registry: true
+
 
 spring:
   cloud:
     client:
-      hostname : Match-service
+      hostname : match-service
   application:
-    name: Match-service
+    name: match-service
 
 management:
   security:

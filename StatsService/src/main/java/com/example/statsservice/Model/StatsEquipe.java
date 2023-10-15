@@ -1,11 +1,12 @@
 package com.example.statsservice.Model;
 
 public class StatsEquipe {
-    public Equipe equipe;
-
     public int nombreDeButMarque;
 
     public int nombreDeButEncaisse;
+
+    public Equipe equipe;
+
 
 
 

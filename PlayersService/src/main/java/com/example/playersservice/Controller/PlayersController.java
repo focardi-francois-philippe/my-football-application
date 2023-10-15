@@ -2,13 +2,11 @@ package com.example.playersservice.Controller;
 
 import com.example.playersservice.Model.Joueur;
 import com.example.playersservice.Utils.Joueurs;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,8 +29,9 @@ public class PlayersController {
         return Joueurs.createJoueurs(nombreJoueurs);
     }
 
+    @HystrixCommand(fallbackMethod = "serviceTeamsNotFound")
     @PostMapping(value = "/players/teams/{idEquipe}")
-    public  Joueur addJoueur(@PathVariable int idEquipe)
+    public  ResponseEntity<?> addJoueur(@PathVariable int idEquipe)
     {
         Joueur j = Joueurs.createJoueurs(1).get(0);
         HttpHeaders headers = new HttpHeaders();
@@ -40,10 +39,17 @@ public class PlayersController {
         HttpEntity<Joueur> entity = new HttpEntity<>(j,headers);
         String url = BASE_URL_TEAMS_SERVICE+idEquipe+"/addPlayers";
         restTemplate.exchange(url, HttpMethod.POST, entity,Joueur.class);
-        return j;
+        return ResponseEntity.ok(j);
     }
+
+    public ResponseEntity<?> serviceTeamsNotFound(int idEquipe)
+    {
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Le service teams n'est pas disponible");
+    }
+
+    @HystrixCommand(fallbackMethod = "serviceTeamsNotFound")
     @GetMapping(value = "/players/{id}")
-    public Joueur joueurById(@PathVariable int id)
+    public ResponseEntity<?> joueurById(@PathVariable int id)
     {
         String url = BASE_URL_TEAMS_SERVICE+"teams/players/"+id;
         Joueur response = restTemplate.exchange(
@@ -53,9 +59,10 @@ public class PlayersController {
                 new ParameterizedTypeReference<Joueur>() {}
         ).getBody();
 
-        return  response;
+        return ResponseEntity.ok(response);
     }
 
+    @HystrixCommand(fallbackMethod = "serviceTeamsNotFound")
     @PutMapping("/players/{id}")
     public Joueur updateName(@PathVariable int id,@RequestBody String name)
     {
@@ -72,7 +79,7 @@ public class PlayersController {
         ).getBody();
         return  response;
     }
-
+    @HystrixCommand(fallbackMethod = "serviceTeamsNotFound")
     @DeleteMapping("/players/{id}")
     public Joueur joueur(@PathVariable int id)
     {

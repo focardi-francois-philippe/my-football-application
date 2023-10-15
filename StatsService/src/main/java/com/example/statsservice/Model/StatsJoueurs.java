@@ -2,13 +2,14 @@ package com.example.statsservice.Model;
 
 public class StatsJoueurs {
 
-    public  Joueur joueur;
-
     public int nbrButMarque;
 
     public int nombreButMarqueExt;
 
     public int nombreButMarqueDom;
+    public  Joueur joueur;
+
+
 
     public StatsJoueurs() {
 
